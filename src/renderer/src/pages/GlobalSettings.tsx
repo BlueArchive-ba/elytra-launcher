@@ -207,6 +207,9 @@ export default function GlobalSettingsPage(): React.JSX.Element {
         </div>
         <div className="page-head-actions">
           {dirty ? <Pill tone="warning" dot>未保存</Pill> : <Pill tone="success" dot>已保存</Pill>}
+          <Button variant="ghost" icon={RefreshCw} loading={checkingUpdate} onClick={() => void checkLauncherUpdate()}>
+            检查更新
+          </Button>
           <Button variant="primary" icon={Save} loading={busy} disabled={!dirty} onClick={() => void save()}>
             保存
           </Button>
