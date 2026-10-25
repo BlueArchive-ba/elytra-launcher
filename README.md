@@ -4,7 +4,6 @@
 
 > ELYTRA 有两条启动路径：**本地直接启动**用于已经下载好的 PCL / 官方版本，不下载、不校验、不重新安装；**ELYTRA 安装模式**由 EML 在独立目录中安装与校验。ELYTRA 负责实例管理、PCL 适配、Mod 文件管理、外观、资源下载、崩溃分析和界面；认证、皮肤、整合包清单安装由 EML 承担。
 
-![实例页 · 深色](screenshots/01-home-dark.png)
 
 ## 功能
 
@@ -113,7 +112,6 @@ node node_modules/electron/install.js
 npm run dev        # 开发模式
 npm run typecheck  # 主进程 + 渲染进程类型检查
 npm run build      # 编译 out/
-npm run smoke      # 构建后以 demo 数据截图到 screenshots/
 npm run dist:dir   # 打包为 release/win-unpacked（免安装目录）
 npm run dist       # 打包 NSIS 安装程序
 ```
@@ -158,7 +156,6 @@ src/preload/     contextBridge API
 src/renderer/    React UI
 src/shared/      类型、主题无关的工具函数
 scripts/         资源生成与自测
-screenshots/     验证截图
 ```
 
 ## 数据与路径
@@ -191,40 +188,6 @@ screenshots/     验证截图
 - **导出格式**：实例页导出的 `manifest.json` 使用 CurseForge 主流整合包格式；无法映射 projectID/fileID 的模组只存在于完整 ZIP 的 `overrides/mods/`，单独导出 JSON 时不会包含这些模组。
 - **Windows 优先**：本地启动按 Windows 的 natives / classpath 规则处理。已实际启动验证 PCL 1.21.1 NeoForge；1.20.1 Forge、26.3 NeoForge、26.4 snapshot 的 Java / classpath / natives 参数构建已验证。
 - **安装包未签名**：Windows SmartScreen 可能给出未知发布者提示；这是自用构建，没有代码签名证书。
-
-## 截图
-
-| 实例设置 | 模组管理 |
-| --- | --- |
-| ![Settings](screenshots/02-instance-settings-dark.png) | ![Mods](screenshots/04-mods-dark.png) |
-
-| 本地直接启动 | 加载已有游戏 |
-| --- | --- |
-| ![Local](screenshots/02f-local-mode-dark.png) | ![Import](screenshots/11-import-game-dark.png) |
-
-| 崩溃分析 | 皮肤 |
-| --- | --- |
-| ![Crash](screenshots/05-crash-dark.png) | ![Skin](screenshots/03-skin-dark.png) |
-
-| 浅色主题 | 启动面板 |
-| --- | --- |
-| ![Light](screenshots/08-home-light.png) | ![Launch](screenshots/13-launch-sequence.png) |
-
-| 账户 | 整合包 |
-| --- | --- |
-| ![Account](screenshots/12-account-dark.png) | ![Modpack](screenshots/06-modpack-dark.png) |
-
-| 统一游戏设置 | 下载优化 |
-| --- | --- |
-| ![Game settings](screenshots/07b-game-settings-dark.png) | ![Download](screenshots/07c-download-settings-dark.png) |
-
-| Modrinth 资源 | 本地皮肤 / 披风 |
-| --- | --- |
-| ![Discover](screenshots/06b-discover-dark.png) | ![Local skin](screenshots/15-skin-local.png) |
-
-| 外观库 | 定时主题 |
-| --- | --- |
-| ![Appearance](screenshots/15-skin-local.png) | ![Theme schedule](screenshots/15b-theme-schedule.png) |
 
 ---
 
