@@ -13690,10 +13690,6 @@ html[data-theme='light'] .ambient-aurora {
 .theme-choice,
 .project-card,
 .settings-card,
-.instance-row,
-.crash-history-item {
-  will-change: transform;
-}
 
 .icon-btn:hover {
   transform: translateY(-1px) rotate(-2deg);
@@ -14910,6 +14906,8 @@ html[data-theme='light'] .ambient-aurora {
 
 /* game release / snapshot banners */
 .game-update-banners {
+  position: relative;
+  z-index: 3;
   max-width: 1660px;
   margin: 0 auto;
   padding: 10px 38px 0;
@@ -15003,3 +15001,21 @@ html[data-theme='light'] .ambient-aurora {
   .game-update-copy span { white-space: normal; }
 }
 
+
+@keyframes update-banner-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.game-update-banners:empty { display: none; }
+
+.game-update-banner {
+  animation: update-banner-in 0.22s cubic-bezier(0.22, 0.8, 0.2, 1) both;
+}
+
+@keyframes theme-repaint-kf {
+  from { opacity: 0.999; }
+  to { opacity: 1; }
+}
+
+body.theme-repaint { animation: theme-repaint-kf 0.18s linear; }

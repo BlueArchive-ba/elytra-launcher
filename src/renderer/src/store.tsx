@@ -195,14 +195,28 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
     setToasts((prev) => prev.filter((t) => t.id !== id))
   }, [])
 
+  const forceThemeRepaint = useCallback(() => {
+    const body = document.body
+    if (!body) return
+    const previous = body.style.display
+    body.style.display = 'none'
+    void body.offsetHeight
+    body.style.display = previous
+    body.classList.remove('theme-repaint')
+    void body.offsetHeight
+    body.classList.add('theme-repaint')
+    window.setTimeout(() => body.classList.remove('theme-repaint'), 240)
+  }, [])
+
   const applyTheme = useCallback((mode: ThemeMode) => {
     setThemeModeState(mode)
     localStorage.setItem('ember-theme', mode)
     if (mode !== 'system') {
       document.documentElement.dataset.theme = mode
       document.documentElement.style.colorScheme = mode
+      forceThemeRepaint()
     }
-  }, [])
+  }, [forceThemeRepaint])
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: light)')
@@ -226,6 +240,7 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
       document.documentElement.dataset.theme = resolved
       document.documentElement.style.colorScheme = resolved
       document.documentElement.dataset.themeMode = themeSchedule.enabled ? 'time' : themeMode
+      forceThemeRepaint()
     }
     update()
     media.addEventListener('change', update)
@@ -234,7 +249,7 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
       media.removeEventListener('change', update)
       if (timer) window.clearInterval(timer)
     }
-  }, [themeMode, themeSchedule.enabled, themeSchedule.lightStart, themeSchedule.darkStart])
+  }, [themeMode, themeSchedule.enabled, themeSchedule.lightStart, themeSchedule.darkStart, forceThemeRepaint])
 
   const setTheme = useCallback(
     (mode: ThemeMode) => {

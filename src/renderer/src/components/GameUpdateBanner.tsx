@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, Sparkles, X } from 'lucide-react'
 import type { GameUpdateInfo } from '@shared/types'
 import { useApp } from '../store'
@@ -53,31 +52,22 @@ export default function GameUpdateBanner(): React.JSX.Element | null {
   }
 
   return (
-    <div className="game-update-banners">
-      <AnimatePresence initial={false}>
-        {rows.map((row) => (
-          <motion.div
-            key={row.id}
-            className={`game-update-banner is-${row.tone}`}
-            initial={{ opacity: 0, y: -7 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5, height: 0, marginBottom: 0 }}
-            transition={{ duration: 0.24, ease: [0.22, 0.8, 0.2, 1] }}
-          >
-            <span className="game-update-icon"><Sparkles size={14} /></span>
-            <div className="game-update-copy">
-              <strong>Minecraft {row.version} {row.tag}已发布</strong>
-              <span>当前实例是 {activeInstance.mcVersion}。新建一个 {row.version} 实例即可使用。</span>
-            </div>
-            <button type="button" className="game-update-action" onClick={() => setCreateOpen(true)}>
-              新建实例 <ArrowRight size={12} />
-            </button>
-            <button type="button" className="game-update-close" aria-label="关闭提示" onClick={() => dismiss(row.id)}>
-              <X size={13} />
-            </button>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
+    <>
+      {rows.map((row) => (
+        <div key={row.id} className={`game-update-banner is-${row.tone}`}>
+          <span className="game-update-icon"><Sparkles size={14} /></span>
+          <div className="game-update-copy">
+            <strong>Minecraft {row.version} {row.tag}已发布</strong>
+            <span>当前实例是 {activeInstance.mcVersion}。新建一个 {row.version} 实例即可使用。</span>
+          </div>
+          <button type="button" className="game-update-action" onClick={() => setCreateOpen(true)}>
+            新建实例 <ArrowRight size={12} />
+          </button>
+          <button type="button" className="game-update-close" aria-label="关闭提示" onClick={() => dismiss(row.id)}>
+            <X size={13} />
+          </button>
+        </div>
+      ))}
+    </>
   )
 }

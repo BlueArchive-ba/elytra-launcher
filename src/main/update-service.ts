@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, net } from 'electron'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import fsp from 'node:fs/promises'
@@ -35,6 +35,22 @@ function isNewer(latest: string, current: string): boolean {
   return false
 }
 
+async function request(url: string, init: RequestInit): Promise<Response> {
+  if (typeof net.fetch === 'function') {
+    try {
+      return await net.fetch(url, init)
+    } catch {
+      // Fall through to Node's fetch; some systems have a broken Chromium proxy.
+    }
+  }
+  return fetch(url, init)
+}
+
+function assetMatchesVersion(asset: GitHubAsset, version: string): boolean {
+  const match = /ELYTRA-(\d+\.\d+\.\d+)/i.exec(asset.name)
+  return !match || match[1] === version
+}
+
 function pickAsset(release: GitHubRelease): GitHubAsset | undefined {
   return release.assets?.find((item) => /\.exe$/i.test(item.name) && /x64|setup|installer/i.test(item.name))
     ?? release.assets?.find((item) => /\.exe$/i.test(item.name))
@@ -45,7 +61,7 @@ export class UpdateService {
   async check(): Promise<LauncherUpdateInfo> {
     const current = app.getVersion()
     try {
-      const response = await fetch(API, {
+      const response = await request(API, {
         headers: { Accept: 'application/vnd.github+json', 'User-Agent': `ELYTRA/${current}` },
         signal: AbortSignal.timeout(15_000)
       })
@@ -53,7 +69,11 @@ export class UpdateService {
       const releases = (await response.json()) as GitHubRelease[]
       // Ignore the newest tag when it has no installer; an empty draft/placeholder
       // release must not block a real update behind it.
-      const candidates = releases.filter((item) => !item.draft && !item.prerelease && pickAsset(item))
+      const candidates = releases.filter((item) => {
+        if (item.draft || item.prerelease) return false
+        const asset = pickAsset(item)
+        return !!asset && assetMatchesVersion(asset, String(item.tag_name ?? '').replace(/^v/i, ''))
+      })
       const release = candidates[0]
       if (!release) {
         const fallback = releases.find((item) => !item.draft && !item.prerelease)
@@ -121,7 +141,7 @@ export class UpdateService {
     const dir = path.join(app.getPath('temp'), 'elytra-update')
     await fsp.mkdir(dir, { recursive: true })
     const target = path.join(dir, info.assetName || `ELYTRA-${info.latest}-x64.exe`)
-    const response = await fetch(parsed, { headers: { 'User-Agent': `ELYTRA/${info.current}` } })
+    const response = await request(parsed.toString(), { headers: { 'User-Agent': `ELYTRA/${info.current}` } })
     if (!response.ok || !response.body) throw new Error(`下载失败：HTTP ${response.status}`)
     const buffer = Buffer.from(await response.arrayBuffer())
     await fsp.writeFile(target, buffer)

@@ -125,14 +125,11 @@ export default function Home(): React.JSX.Element {
               const active = instance.id === activeInstance.id
               const instanceAccent = ACCENTS.find((item) => item.key === instance.accent) ?? ACCENTS[0]
               return (
-                <motion.button
+                <button
                   key={instance.id}
                   type="button"
                   className={classNames('instance-row', active && 'is-active')}
                   onClick={() => void selectInstance(instance.id)}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.035, duration: 0.25 }}
                   style={{ '--row-accent': instanceAccent.from } as React.CSSProperties}
                 >
                   {active ? <motion.span className="instance-row-bar" layoutId="instance-row-bar" /> : null}
@@ -148,7 +145,7 @@ export default function Home(): React.JSX.Element {
                     <em>{relativeTime(instance.lastPlayedAt)}</em>
                     <i />
                   </span>
-                </motion.button>
+                </button>
               )
             })}
           </div>
