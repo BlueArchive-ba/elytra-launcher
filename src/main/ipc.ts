@@ -277,10 +277,6 @@ export function registerIpc(ctx: IpcContext): void {
   ipcMain.handle('updates:check', () => updates.check())
   ipcMain.handle('updates:download', (_event, info: any) => updates.download(info))
   ipcMain.handle('updates:install', (_event, file: string) => updates.install(file))
-  ipcMain.handle('personalization:update', (_event, input: any) => {
-    store.updatePersonalization(input ?? {})
-    return publicConfig(store)
-  })
   ipcMain.handle('maintenance:scan', () => maintenance.scan())
   ipcMain.handle('maintenance:clean', (_event, ids: string[]) =>
     maintenance.clean(Array.isArray(ids) ? ids.filter((id) => typeof id === 'string') : [])

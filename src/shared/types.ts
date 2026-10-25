@@ -148,12 +148,6 @@ export interface LauncherUpdateInfo {
   publishedAt: string
 }
 
-export interface Personalization {
-  accent: AccentKey
-  ambient: 'subtle' | 'normal' | 'vivid'
-  motion: boolean
-}
-
 export interface AppConfig {
   schema: 1
   theme: ThemeMode
@@ -167,7 +161,6 @@ export interface AppConfig {
   appearanceSchedule?: AppearanceSchedule
   themeSchedule?: ThemeSchedule
   crashHistory?: CrashHistoryEntry[]
-  personalization?: Personalization
   lastExportDir?: string
   lastFolderDir?: string
   lastLaunches?: Record<string, LastLaunchSummary>
@@ -753,9 +746,6 @@ export interface EmberAPI {
   }
   gameUpdates: {
     check(): Promise<GameUpdateInfo>
-  }
-  personalization: {
-    update(input: Partial<Personalization>): Promise<PublicConfig>
   }
   updates: {
     check(): Promise<LauncherUpdateInfo>

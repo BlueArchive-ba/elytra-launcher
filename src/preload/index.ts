@@ -119,9 +119,6 @@ const api: EmberAPI = {
   gameUpdates: {
     check: () => invoke('gameUpdates:check')
   },
-  personalization: {
-    update: (input) => invoke('personalization:update', input)
-  },
   updates: {
     check: () => invoke('updates:check'),
     download: (info) => invoke('updates:download', info),

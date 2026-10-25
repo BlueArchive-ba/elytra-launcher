@@ -25,7 +25,6 @@ import {
 } from 'lucide-react'
 import type { CleanupGroup, Settings, ThemeMode } from '@shared/types'
 import { formatBytes } from '@shared/utils'
-import { ACCENTS } from '@shared/utils'
 import { useApp } from '../store'
 import { Button, classNames, Divider, Modal, ModalHeader, Pill, Segmented, Switch } from '../components/ui'
 import Background from '../components/Background'
@@ -45,7 +44,7 @@ const THEME_OPTIONS: { value: ThemeMode; label: string; hint: string; icon: type
 ]
 
 export default function GlobalSettingsPage(): React.JSX.Element {
-  const { config, system, themeMode, themeSchedule, setTheme, setThemeSchedule, updateGlobal, pushToast, boot, activeInstance, personalization, updatePersonalization } = useApp()
+  const { config, system, themeMode, themeSchedule, setTheme, setThemeSchedule, updateGlobal, pushToast, boot, activeInstance } = useApp()
   const [formState, setFormState] = useState<Settings | null>(null)
   const [busy, setBusy] = useState(false)
   const [diagBusy, setDiagBusy] = useState(false)
@@ -254,59 +253,6 @@ export default function GlobalSettingsPage(): React.JSX.Element {
                 </label>
               </div>
               <p className="field-hint">例如 07:00 浅色、19:00 深色；支持跨午夜的自定义时间段。</p>
-            </div>
-          </section>
-
-          <Divider label="启动器个性化" />
-
-          <section className="settings-panel">
-            <div className="panel-title">
-              <span className="panel-title-icon"><Settings2 size={18} /></span>
-              <div>
-                <h2>外观与动效</h2>
-                <p>强调色会应用到按钮、选中状态与高光；背景强度只影响环境层。</p>
-              </div>
-            </div>
-            <div className="settings-card">
-              <div className="personalization-label">强调色</div>
-              <div className="accent-picker">
-                {ACCENTS.map((accent) => (
-                  <button
-                    key={accent.key}
-                    type="button"
-                    className={classNames('accent-swatch', personalization.accent === accent.key && 'is-selected')}
-                    style={{ '--swatch': accent.from, '--swatch-2': accent.to } as React.CSSProperties}
-                    onClick={() => void updatePersonalization({ accent: accent.key })}
-                    title={accent.label}
-                  >
-                    <span />
-                    <em>{accent.label}</em>
-                  </button>
-                ))}
-              </div>
-              <div className="setting-line personalization-line">
-                <div>
-                  <strong>背景强度</strong>
-                  <p>控制极光与尘埃粒子的可见程度。</p>
-                </div>
-                <Segmented
-                  compact
-                  value={personalization.ambient}
-                  options={[
-                    { value: 'subtle', label: '克制' },
-                    { value: 'normal', label: '标准' },
-                    { value: 'vivid', label: '浓郁' }
-                  ]}
-                  onChange={(value) => void updatePersonalization({ ambient: value as 'subtle' | 'normal' | 'vivid' })}
-                />
-              </div>
-              <div className="setting-line personalization-line">
-                <div>
-                  <strong>界面动效</strong>
-                  <p>关闭后页面仍可用，但入场、悬停与弹窗动画会降级。</p>
-                </div>
-                <Switch checked={personalization.motion} onChange={(value) => void updatePersonalization({ motion: value })} label="界面动效" />
-              </div>
             </div>
           </section>
 

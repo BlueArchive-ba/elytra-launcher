@@ -8,7 +8,6 @@ import type {
   LaunchState,
   ModrinthDownloadProgress,
   ModrinthUpdate,
-  Personalization,
   PublicConfig,
   Settings,
   SettingsOverride,
@@ -56,8 +55,6 @@ interface AppContextValue {
   updatesChecking: boolean
   updatingMods: string[]
   modProgress: ModrinthDownloadProgress | null
-  personalization: Personalization
-  updatePersonalization: (input: Partial<Personalization>) => Promise<void>
   refreshModUpdates: (silent?: boolean) => Promise<ModrinthUpdate[]>
   updateMod: (update: ModrinthUpdate) => Promise<void>
   updateAllMods: () => Promise<void>
@@ -173,7 +170,6 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
   const toastTimers = useRef(new Map<string, number>())
 
   const config = boot?.config ?? null
-  const personalization = config?.personalization ?? { accent: 'ember', ambient: 'normal', motion: true }
   const instances = boot?.instances ?? []
   const system = boot?.system ?? null
   const activeAccount = boot?.activeAccount ?? null
@@ -568,11 +564,6 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
     }
   }, [pushToast])
 
-  const updatePersonalization = useCallback(async (input: Partial<Personalization>) => {
-    const next = await window.ember.personalization.update(input)
-    setBoot((prev) => (prev ? { ...prev, config: next } : prev))
-  }, [])
-
   const cancelLaunch = useCallback(async () => {
     try {
       const next = await window.ember.launch.cancel()
@@ -645,8 +636,6 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
     updatesChecking,
     updatingMods,
     modProgress,
-    personalization,
-    updatePersonalization,
     refreshModUpdates,
     updateMod,
     updateAllMods,

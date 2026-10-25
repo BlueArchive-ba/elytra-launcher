@@ -39,7 +39,6 @@
   - **集中外观库**：所有皮肤与披风放在 `%APPDATA%/ELYTRA/appearance/skins|capes`，可批量导入、打开文件夹、直接点选应用；当前实例已有的 LocalSkin 文件也会出现在列表里。
   - **没有补丁时**：检测不到 `CustomSkinLoader*.jar` 时，外观页会提供「安装万用皮肤补丁」按钮，通过 Modrinth 自动下载匹配当前加载器与游戏版本的补丁；安装后即可在启动器选择本地皮肤与披风。Vanilla 实例无法加载补丁时会明确提示。
 - **启动器外观**：深色 / 浅色 / 跟随系统；新增**按时间切换**，可自定义浅色开始时间和深色开始时间，支持跨午夜。
-- **个性化**：强调色、背景强度（克制/标准/浓郁）、界面动效开关；强调色应用到按钮、选中态和高光。
 - **动效**：新的电影感启动页（双帘开幕、逐字 Logo、光束和扫光）、页面淡入位移、极光与 Python 生成尘埃、指针视差、骨架屏、聚光卡片和数字滚动；支持 `prefers-reduced-motion`。
 - **启动控制**：启动过程中可点「取消启动」；游戏运行时可点击右上角「游戏运行中」或启动面板里的「停止游戏」结束 Java 进程；启动页缩短等待时间。
 - **实例快捷方式**：实例设置 → 目录页可创建桌面 `.lnk`，快捷方式携带 `--instance` + `--launch`：先打开 ELYTRA，再自动启动该实例。
@@ -127,7 +126,7 @@ $env:ELECTRON_BUILDER_BINARIES_MIRROR='https://npmmirror.com/mirrors/electron-bu
 
 产物：
 
-- `release/ELYTRA-1.3.1-x64.exe` — NSIS 安装程序
+- `release/ELYTRA-1.3.2-x64.exe` — NSIS 安装程序
 - `release/win-unpacked/ELYTRA.exe` — 免安装目录版
 
 自测（后端核心，不需要启动 Minecraft）：

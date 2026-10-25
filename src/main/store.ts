@@ -38,7 +38,6 @@ export function defaultConfig(): AppConfig {
     appearanceSchedule: { enabled: false, slots: [] },
     themeSchedule: { enabled: false, lightStart: '07:00', darkStart: '19:00' },
     crashHistory: [],
-    personalization: { accent: 'ember', ambient: 'normal', motion: true },
     onboarded: false,
     createdAt: Date.now(),
     updatedAt: Date.now()
@@ -237,11 +236,6 @@ export class ConfigStore {
             }
           : { enabled: false, lightStart: '07:00', darkStart: '19:00' },
       crashHistory: Array.isArray(input.crashHistory) ? input.crashHistory.slice(0, 12) : [],
-      personalization: {
-        accent: ['ember', 'frost', 'void', 'moss', 'gold', 'orchid'].includes(input.personalization?.accent ?? '') ? input.personalization!.accent : 'ember',
-        ambient: ['subtle', 'normal', 'vivid'].includes(input.personalization?.ambient ?? '') ? input.personalization!.ambient : 'normal',
-        motion: input.personalization?.motion !== false
-      }
     }
     if (merged.global.downloadThreads === 16) merged.global.downloadThreads = 32
     merged.instances = merged.instances
@@ -492,18 +486,6 @@ export class ConfigStore {
     this.update((cfg) => {
       cfg.theme = theme
     })
-  }
-
-  updatePersonalization(input: Partial<NonNullable<AppConfig['personalization']>>): AppConfig {
-    this.update((cfg) => {
-      const current = cfg.personalization ?? { accent: 'ember', ambient: 'normal', motion: true }
-      cfg.personalization = {
-        accent: ['ember', 'frost', 'void', 'moss', 'gold', 'orchid'].includes(input.accent ?? '') ? input.accent! : current.accent,
-        ambient: ['subtle', 'normal', 'vivid'].includes(input.ambient ?? '') ? input.ambient! : current.ambient,
-        motion: input.motion === undefined ? current.motion : !!input.motion
-      }
-    })
-    return this.get()
   }
 
   updateThemeSchedule(schedule: NonNullable<AppConfig['themeSchedule']>): AppConfig {
