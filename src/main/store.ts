@@ -443,7 +443,6 @@ export class ConfigStore {
       cfg.global.downloadThreads = Number.isFinite(Number(cfg.global.downloadThreads))
         ? Math.max(4, Math.min(128, Math.round(Number(cfg.global.downloadThreads))))
         : 32
-      if (cfg.global.downloadThreads === 16) cfg.global.downloadThreads = 32
       cfg.global.downloadLimit = Number.isFinite(Number(cfg.global.downloadLimit))
         ? Math.max(0, Math.min(20, Math.round(Number(cfg.global.downloadLimit))))
         : 0
