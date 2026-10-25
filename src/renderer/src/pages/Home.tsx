@@ -83,7 +83,7 @@ export default function Home(): React.JSX.Element {
 
         <footer className="home-footline">
           <span>ELYTRA</span>
-          <span>v{boot?.version ?? '1.3.0'}</span>
+          <span>v{boot?.version ?? '1.3.1'}</span>
           <span>{system?.platform ?? 'win32'} · {system?.arch ?? 'x64'}</span>
         </footer>
       </div>
@@ -248,7 +248,7 @@ export default function Home(): React.JSX.Element {
 
       <footer className="home-footline">
         <span>ELYTRA · EML</span>
-        <span>v{boot?.version ?? '1.3.0'}</span>
+        <span>v{boot?.version ?? '1.3.1'}</span>
         <span>{system?.platform ?? 'win32'} · {system?.arch ?? 'x64'}</span>
       </footer>
     </div>

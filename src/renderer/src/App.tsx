@@ -57,7 +57,7 @@ function SplashScreen({ done }: { done: boolean }): React.JSX.Element {
         <div className="splash-frame"><i /><i /><i /><i /></div>
       </motion.div>
       <div className="splash-rail left">MINECRAFT / LAUNCHER</div>
-      <div className="splash-rail right">ELYTRA // {system?.appVersion ?? '1.3.0'}</div>
+      <div className="splash-rail right">ELYTRA // {system?.appVersion ?? '1.3.1'}</div>
       <motion.div className="splash-content" animate={{ opacity: done ? 0 : 1, scale: done ? 1.03 : 1 }} transition={{ duration: 0.2 }}>
         <motion.div className="splash-logo" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 18 }}>
           <img src={logo} alt="ELYTRA" />
@@ -90,7 +90,7 @@ function SplashScreen({ done }: { done: boolean }): React.JSX.Element {
         </div>
         <div className="splash-foot">
           <span>ELYTRA</span>
-          <em>v{system?.appVersion ?? '1.3.0'}</em>
+          <em>v{system?.appVersion ?? '1.3.1'}</em>
         </div>
       </motion.div>
     </motion.div>

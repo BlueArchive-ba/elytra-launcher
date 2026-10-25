@@ -127,7 +127,7 @@ $env:ELECTRON_BUILDER_BINARIES_MIRROR='https://npmmirror.com/mirrors/electron-bu
 
 产物：
 
-- `release/ELYTRA-1.3.0-x64.exe` — NSIS 安装程序
+- `release/ELYTRA-1.3.1-x64.exe` — NSIS 安装程序
 - `release/win-unpacked/ELYTRA.exe` — 免安装目录版
 
 自测（后端核心，不需要启动 Minecraft）：

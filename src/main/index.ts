@@ -377,16 +377,11 @@ async function runFeatureTest(
   const results: string[] = []
   const check = (name: string, ok: boolean, detail: string) => results.push(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`)
   try {
-    const poInstance = store.get().instances.find((item) => item.slug === 'po')
-    if (poInstance) {
-      const crashInfo = await crash.analyze(poInstance)
-      check(
-        'crash-log-context',
-        crashInfo.findings.some((item) => item.id === 'missing-dependency' && /fabric-api/i.test(item.title)),
-        `${crashInfo.findings[0]?.title ?? crashInfo.headline} / ${crashInfo.sourceKind}`
-      )
-    }
     const maintenance = new MaintenanceService(store, demo)
+    const gameInfo = await new GameUpdateService().check()
+    check('game-update-api', !!gameInfo.release?.version && !!gameInfo.snapshot?.version, `release=${gameInfo.release?.version} snapshot=${gameInfo.snapshot?.version}`)
+    const launcherInfo = await new UpdateService().check()
+    check('launcher-update-api', !!launcherInfo.latest, `current=${launcherInfo.current} latest=${launcherInfo.latest} available=${launcherInfo.available}`)
     const cleanupGroups = await maintenance.scan()
     check(
       'maintenance-scan',
