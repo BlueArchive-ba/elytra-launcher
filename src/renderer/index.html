@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' data: blob:; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' ws: http: https:; font-src 'self' data:;"
+    />
+    <title>ELYTRA · Minecraft Launcher</title>
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem('ember-theme') || 'dark'
+          const resolved =
+            saved === 'system'
+              ? window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark'
+              : saved
+          document.documentElement.dataset.theme = resolved
+          document.documentElement.dataset.themeMode = saved
+        } catch (_) {
+          document.documentElement.dataset.theme = 'dark'
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

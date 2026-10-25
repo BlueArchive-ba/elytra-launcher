@@ -1,0 +1,101 @@
+{
+  "name": "elytra-launcher",
+  "version": "1.3.0",
+  "private": true,
+  "description": "An EML-powered Minecraft launcher with direct PCL version support",
+  "author": "qdq",
+  "license": "MIT",
+  "type": "module",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "dist": "npm run build && node scripts/package-win.mjs nsis",
+    "dist:dir": "npm run build && node scripts/package-win.mjs dir",
+    "smoke": "electron . --demo --smoke",
+    "clean": "node scripts/clean-artifacts.mjs"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "eml-lib": "^2.7.4"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "@types/node": "^22.15.30",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@types/three": "^0.156.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^44.9.0",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^6.0.0",
+    "framer-motion": "^12.19.1",
+    "lucide-react": "^0.525.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "skinview3d": "^3.4.2",
+    "three": "0.156.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0"
+  },
+  "build": {
+    "appId": "com.qdq.elytra",
+    "productName": "ELYTRA",
+    "asar": true,
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json",
+      "build/icon.png",
+      "build/tray.png"
+    ],
+    "extraResources": [
+      {
+        "from": "build/tray.png",
+        "to": "tray.png"
+      }
+    ],
+    "extraMetadata": {
+      "main": "./out/main/index.js"
+    },
+    "win": {
+      "signExecutable": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "ELYTRA-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ],
+      "language": "2052",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "shortcutName": "ELYTRA"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlueArchive-ba/elytra-launcher.git"
+  }
+}
