@@ -250,12 +250,19 @@ function Shell(): React.JSX.Element {
   )
 }
 
+function MotionShell(): React.JSX.Element {
+  const { personalization } = useApp()
+  return (
+    <MotionConfig reducedMotion={personalization.motion ? 'user' : 'always'}>
+      <Shell />
+    </MotionConfig>
+  )
+}
+
 export default function App(): React.JSX.Element {
   return (
     <AppProvider>
-      <MotionConfig reducedMotion="user">
-        <Shell />
-      </MotionConfig>
+      <MotionShell />
     </AppProvider>
   )
 }
