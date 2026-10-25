@@ -198,6 +198,10 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
   const applyTheme = useCallback((mode: ThemeMode) => {
     setThemeModeState(mode)
     localStorage.setItem('ember-theme', mode)
+    if (mode !== 'system') {
+      document.documentElement.dataset.theme = mode
+      document.documentElement.style.colorScheme = mode
+    }
   }, [])
 
   useEffect(() => {
@@ -220,6 +224,7 @@ export function AppProvider({ children }: { children: React.ReactNode }): React.
       }
       setResolvedTheme(resolved)
       document.documentElement.dataset.theme = resolved
+      document.documentElement.style.colorScheme = resolved
       document.documentElement.dataset.themeMode = themeSchedule.enabled ? 'time' : themeMode
     }
     update()

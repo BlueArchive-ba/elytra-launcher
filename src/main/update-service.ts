@@ -5,19 +5,24 @@ import fsp from 'node:fs/promises'
 import path from 'node:path'
 
 const REPO = 'BlueArchive-ba/elytra-launcher'
-const API = `https://api.github.com/repos/${REPO}/releases/latest`
+const API = `https://api.github.com/repos/${REPO}/releases?per_page=30`
 
-export interface LauncherUpdateInfo {
-  available: boolean
-  current: string
-  latest: string
+interface GitHubAsset {
   name: string
-  notes: string
-  pageUrl: string
-  assetUrl: string | null
-  assetName: string | null
+  browser_download_url: string
   size: number
-  publishedAt: string
+  updated_at?: string
+}
+
+interface GitHubRelease {
+  tag_name?: string
+  name?: string
+  body?: string
+  html_url?: string
+  published_at?: string
+  draft?: boolean
+  prerelease?: boolean
+  assets?: GitHubAsset[]
 }
 
 function isNewer(latest: string, current: string): boolean {
@@ -30,6 +35,11 @@ function isNewer(latest: string, current: string): boolean {
   return false
 }
 
+function pickAsset(release: GitHubRelease): GitHubAsset | undefined {
+  return release.assets?.find((item) => /\.exe$/i.test(item.name) && /x64|setup|installer/i.test(item.name))
+    ?? release.assets?.find((item) => /\.exe$/i.test(item.name))
+}
+
 /** GitHub Releases based update check. No external updater runtime is required. */
 export class UpdateService {
   async check(): Promise<LauncherUpdateInfo> {
@@ -40,30 +50,52 @@ export class UpdateService {
         signal: AbortSignal.timeout(15_000)
       })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const data = (await response.json()) as {
-        tag_name?: string
-        name?: string
-        body?: string
-        html_url?: string
-        published_at?: string
-        assets?: { name: string; browser_download_url: string; size: number }[]
+      const releases = (await response.json()) as GitHubRelease[]
+      // Ignore the newest tag when it has no installer; an empty draft/placeholder
+      // release must not block a real update behind it.
+      const candidates = releases.filter((item) => !item.draft && !item.prerelease && pickAsset(item))
+      const release = candidates[0]
+      if (!release) {
+        const fallback = releases.find((item) => !item.draft && !item.prerelease)
+        return {
+          available: false,
+          current,
+          latest: String(fallback?.tag_name ?? current).replace(/^v/i, ''),
+          name: fallback?.name ?? '',
+          notes: fallback?.body ?? '',
+          pageUrl: fallback?.html_url ?? `https://github.com/${REPO}/releases`,
+          assetUrl: null,
+          assetName: null,
+          size: 0,
+          publishedAt: fallback?.published_at ?? '',
+          error: '最新 Release 没有可下载的安装包'
+        }
       }
-      const latest = String(data.tag_name ?? '').replace(/^v/i, '')
-      const asset = data.assets?.find((item) => /\.exe$/i.test(item.name) && /x64|setup|installer/i.test(item.name))
-        ?? data.assets?.find((item) => /\.exe$/i.test(item.name))
+      const asset = pickAsset(release)
+      const latest = String(release.tag_name ?? '').replace(/^v/i, '')
+      let installedAt = 0
+      if (app.isPackaged) {
+        try {
+          installedAt = fs.statSync(app.getPath('exe')).mtimeMs
+        } catch {
+          installedAt = 0
+        }
+      }
+      const releaseTime = Date.parse(asset?.updated_at ?? release.published_at ?? '')
+      const sameVersionNewBuild = !!latest && latest === current && installedAt > 0 && releaseTime > installedAt + 60_000
       return {
-        available: !!latest && isNewer(latest, current),
+        available: !!latest && (isNewer(latest, current) || sameVersionNewBuild),
         current,
         latest: latest || current,
-        name: data.name ?? `ELYTRA ${latest}`,
-        notes: data.body ?? '',
-        pageUrl: data.html_url ?? `https://github.com/${REPO}/releases`,
+        name: release.name ?? `ELYTRA ${latest}`,
+        notes: release.body ?? '',
+        pageUrl: release.html_url ?? `https://github.com/${REPO}/releases`,
         assetUrl: asset?.browser_download_url ?? null,
         assetName: asset?.name ?? null,
         size: asset?.size ?? 0,
-        publishedAt: data.published_at ?? ''
+        publishedAt: release.published_at ?? ''
       }
-    } catch {
+    } catch (error) {
       return {
         available: false,
         current,
@@ -74,7 +106,8 @@ export class UpdateService {
         assetUrl: null,
         assetName: null,
         size: 0,
-        publishedAt: ''
+        publishedAt: '',
+        error: error instanceof Error ? `更新服务不可用：${error.message}` : '更新服务不可用'
       }
     }
   }
@@ -103,4 +136,18 @@ export class UpdateService {
     spawn(resolved, [], { detached: true, stdio: 'ignore' }).unref()
     setTimeout(() => app.quit(), 350)
   }
+}
+
+export interface LauncherUpdateInfo {
+  available: boolean
+  current: string
+  latest: string
+  name: string
+  notes: string
+  pageUrl: string
+  assetUrl: string | null
+  assetName: string | null
+  size: number
+  publishedAt: string
+  error?: string
 }

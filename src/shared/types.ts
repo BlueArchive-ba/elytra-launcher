@@ -146,6 +146,7 @@ export interface LauncherUpdateInfo {
   assetName: string | null
   size: number
   publishedAt: string
+  error?: string
 }
 
 export interface AppConfig {

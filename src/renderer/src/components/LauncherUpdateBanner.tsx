@@ -18,8 +18,17 @@ export default function LauncherUpdateBanner(): React.JSX.Element | null {
       .check()
       .then((data) => !cancelled && setInfo(data))
       .catch(() => undefined)
+    const manual = (event: Event) => {
+      const detail = (event as CustomEvent<LauncherUpdateInfo>).detail
+      if (!detail?.available) return
+      setInfo(detail)
+      setDismissed('')
+      sessionStorage.removeItem(KEY)
+    }
+    window.addEventListener('elytra:update-available', manual)
     return () => {
       cancelled = true
+      window.removeEventListener('elytra:update-available', manual)
     }
   }, [])
 

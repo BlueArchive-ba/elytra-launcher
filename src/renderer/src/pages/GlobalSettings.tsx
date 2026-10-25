@@ -16,6 +16,7 @@ import {
   MemoryStick,
   Monitor,
   Moon,
+  RefreshCw,
   Save,
   Settings2,
   Sun,
@@ -54,6 +55,7 @@ export default function GlobalSettingsPage(): React.JSX.Element {
   const [cleanupSelected, setCleanupSelected] = useState<Set<string>>(new Set())
   const [cleanupBusy, setCleanupBusy] = useState(false)
   const [uninstallOpen, setUninstallOpen] = useState(false)
+  const [checkingUpdate, setCheckingUpdate] = useState(false)
   const [purgeOnUninstall, setPurgeOnUninstall] = useState(false)
   const [purging, setPurging] = useState(false)
   const baseline = useMemo(() => (config ? JSON.stringify(config.global) : ''), [config])
@@ -140,6 +142,25 @@ export default function GlobalSettingsPage(): React.JSX.Element {
       pushToast({ tone: 'error', title: '清理失败', message: err instanceof Error ? err.message : String(err) })
     } finally {
       setCleanupBusy(false)
+    }
+  }
+
+  const checkLauncherUpdate = async () => {
+    setCheckingUpdate(true)
+    try {
+      const info = await window.ember.updates.check()
+      if (info.error && !info.available) {
+        pushToast({ tone: 'error', title: '检查更新失败', message: info.error })
+      } else if (info.available) {
+        window.dispatchEvent(new CustomEvent('elytra:update-available', { detail: info }))
+        pushToast({ tone: 'success', title: `发现 ELYTRA ${info.latest}`, message: '更新横幅已显示，点击下载并安装。' })
+      } else {
+        pushToast({ tone: 'success', title: '已是最新版本', message: `当前 ELYTRA ${info.current}` })
+      }
+    } catch (err) {
+      pushToast({ tone: 'error', title: '检查更新失败', message: err instanceof Error ? err.message : String(err) })
+    } finally {
+      setCheckingUpdate(false)
     }
   }
 
@@ -554,7 +575,9 @@ export default function GlobalSettingsPage(): React.JSX.Element {
         <div className="settings-data-row">
           <span>启动器版本</span>
           <code>ELYTRA {system.appVersion} · Electron {system.electron}</code>
-          <span />
+          <button type="button" onClick={() => void checkLauncherUpdate()} disabled={checkingUpdate}>
+            <RefreshCw size={13} className={checkingUpdate ? 'spin' : undefined} /> {checkingUpdate ? '检查中' : '检查更新'}
+          </button>
         </div>
         <div className="settings-data-row">
           <span>数据目录</span>
